@@ -1,0 +1,6 @@
+streamlit
+pandas
+openpyxl
+zipfile36
+typing-extensions
+streamlit-quill
