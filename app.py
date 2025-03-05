@@ -75,7 +75,7 @@ def process_excel_file(df: pd.DataFrame) -> openpyxl.Workbook:
     # Process marks and insert columns
     start_col = 4  # Starting after 'Register No', 'Name', 'College ID'
     for subject_num in range(num_subjects):
-        marks_col = start_col + (subject_num * 4) + 2  # Position of Marks column
+        marks_col = start_col + (subject_num * 7) + 2  # Position of Marks column
         insert_col = marks_col + 1
         
         # Insert columns for Internal, External, Total
