@@ -40,7 +40,7 @@ def process_marks(marks: str) -> Tuple[Optional[int], Optional[int], Optional[in
 
 def process_excel_file(df: pd.DataFrame) -> openpyxl.Workbook:
     """
-    Process the uploaded Excel file and add internal/external/total columns.
+    Process the uploaded file (Excel or CSV) and add internal/external/total columns.
     
     Args:
         df: Input DataFrame with marksheet data
@@ -75,7 +75,7 @@ def process_excel_file(df: pd.DataFrame) -> openpyxl.Workbook:
     # Process marks and insert columns
     start_col = 4  # Starting after 'Register No', 'Name', 'College ID'
     for subject_num in range(num_subjects):
-        marks_col = start_col + (subject_num * 7) + 2  # Position of Marks column
+        marks_col = start_col + (subject_num * 4) + 2  # Position of Marks column
         insert_col = marks_col + 1
         
         # Insert columns for Internal, External, Total
@@ -165,12 +165,23 @@ def create_department_batches(workbook: openpyxl.Workbook) -> io.BytesIO:
 def main():
     st.title("Marksheet Processing and Department-wise Excel Export")
     
-    uploaded_file = st.file_uploader("Upload a Marksheet Excel file", type=["xlsx"])
+    # Allow both Excel and CSV files
+    uploaded_file = st.file_uploader("Upload a Marksheet file", type=["xlsx", "csv"])
     
     if uploaded_file is not None:
         try:
-            # Read and process the Excel file
-            df = pd.read_excel(uploaded_file, header=None)
+            # Determine file type and read accordingly
+            file_extension = uploaded_file.name.split('.')[-1].lower()
+            
+            if file_extension == 'xlsx':
+                df = pd.read_excel(uploaded_file, header=None)
+            elif file_extension == 'csv':
+                df = pd.read_csv(uploaded_file, header=None)
+            else:
+                st.error("Unsupported file format. Please upload an .xlsx or .csv file.")
+                return
+            
+            # Process the file
             processed_workbook = process_excel_file(df)
             
             # Create department/batch-wise files
